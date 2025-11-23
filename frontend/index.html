@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrASH Search - Home</title>
+
+    <!-- Link to the Common CSS file-->
+    <link rel="stylesheet" href="css/common.css" />
+
+    <!-- Link to Font Awesome CSS for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="header-nav">
+        <!-- Mail button for contacting -->
+        <a
+          href="mailto:dit22150@gmai.com"
+          class="header-button"
+          aria-label="Contact US"
+        >
+          <i class="fas fa-envelope"></i>
+        </a>
+
+        <!-- Image button -->
+        <button id="image-button" class="header-button" aria-label="Show Image">
+          <i class="fas fa-image"></i>
+        </button>
+
+        <!-- Audio Button for the Anthem -->
+        <div class="audio-controls">
+          <button
+            id="play-pause-button"
+            class="header-button"
+            aria-label="Play or Pause Audio"
+          >
+            <i id="play-pause-icon" class="fas fa-play"></i>
+          </button>
+          <input
+            type="range"
+            id="volume-slider"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            aria-label="Volume"
+          />
+        </div>
+
+        <!-- Audio (Hidden) -->
+        <audio id="theme-audio" src="audio/theme.mp3" loop></audio>
+
+        <!-- Light/Dark Mode Toggle button -->
+        <button
+          id="theme-toggle-button"
+          class="header-button"
+          aria-label="Toggle Light or Dark Mode"
+        >
+          <i id="theme-icon" class="fas fa-sun"></i>
+        </button>
+      </nav>
+    </header>
+
+    <main></main>
+
+    <script src="js/common.js"></script>
+  </body>
+</html>

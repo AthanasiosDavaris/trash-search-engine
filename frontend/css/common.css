@@ -1,0 +1,110 @@
+/* Base css reset, all */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Color Variables */
+:root {
+  --background-color: white;
+  --text-color: rgb(13, 17, 23);
+  --header-background-color: ghostwhite;
+  --button-background-color: rgb(225, 228, 232);
+  --button-hover-background-color: rgb(209, 213, 218);
+  --primary-color: rgb(0, 90, 156);
+  --accent-color: rgb(216, 0 , 39);
+  --border-color: rgb(208, 215, 222);
+}
+
+[data-theme="dark"] {
+  --background-color: rgb(13, 17, 23);
+  --text-color: aliceblue;
+  --header-background-color: rgb(22, 27, 34);
+  --button-background-color: rgb(33, 38, 45);
+  --button-hover-background-color: rgb(48, 54, 61);
+  --border-color: rgb(48, 54, 61);
+}
+
+/* Body styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 900px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-header {
+  background-color: var(--header-background-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  transition: background-color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.header-button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+.header-button i {
+  font-size: 18px;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 5px;
+  background: var(--border-color);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: var(--primary-color);
+  border-radius: 50%;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  background: var(--primary-color);
+  border-radius: 50%;
+}
