@@ -7,6 +7,8 @@
 
     <!-- Link to the Common CSS file-->
     <link rel="stylesheet" href="css/common.css" />
+    <!-- Link to Index.css -->
+    <link rel="stylesheet" href="css/index.css" />
 
     <!-- Link to Font Awesome CSS for icons -->
     <link
@@ -69,8 +71,47 @@
       </nav>
     </header>
 
-    <main></main>
+    <!-- Main Content Area -->
+    <main>
+      <div class="center-container">
+        <!-- Site Title -->
+        <h1 class="site-title">
+          <span class="title-blue">Tr</span><span class="title-red">ASH</span>
+        </h1>
 
+        <!-- Search Bar -->
+        <form action="search.html" method="GET" class="search-form">
+          <input
+            type="text"
+            name="query"
+            class="search-input"
+            placeholder="Search the words of our lord and saviour..."
+            aria-label="Search Query"
+          />
+
+          <div class="button-group">
+            <!-- AI Search Button -->
+            <button type="button" id="ai-search-button" class="action-button">
+              <i class="fas fa-robot"></i> AI Search
+            </button>
+
+            <!-- Main Search Button -->
+            <button type="submit" class="action-button primary-button">
+              <i class="fas fa-search"></i> Search
+            </button>
+
+            <!-- Random Post Button -->
+            <button type="button" id="random-post-button" class="action-button">
+              <i class="fas fa-random"></i> Random Post
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- Link to Common JS file -->
     <script src="js/common.js"></script>
+    <!-- Link to Index JS file -->
+    <script src="js/index.js"></script>
   </body>
 </html>

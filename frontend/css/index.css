@@ -1,0 +1,88 @@
+main {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 32px;
+}
+
+.center-container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.site-title {
+  font-size: clamp(4rem, 15vw, 10rem);
+  font-weight: bolder;
+  margin-bottom: 32px;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+}
+
+.title-blue {
+  color: var(--primary-color);
+}
+
+.title-red {
+  color: var(--accent-color);
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 19px;
+  font-size: 18px;
+  border-radius: 50px;
+  border: 2px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(0, 90, 156, 0.2);
+}
+
+.button-group {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-button:hover {
+  background-color: var(--button-hover-background-color);
+  transform: translateY(-2px);
+}
+
+.primary-button {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.primary-button:hover {
+  background-color: rgb(0, 74, 124);
+  border-color: rgb(0, 74, 124);
+}

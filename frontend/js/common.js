@@ -1,5 +1,5 @@
 // It waits for the DOM to be fully loaded before running the script, its standard practice on basically every site.
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 
   // Light/Dark Theme Toggle
   const themeToggleButton = document.getElementById('theme-toggle-button');
