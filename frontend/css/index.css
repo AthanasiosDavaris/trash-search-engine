@@ -13,7 +13,7 @@ main {
 }
 
 .site-title {
-  font-size: clamp(4rem, 15vw, 10rem);
+  font-size: clamp(64px, 15vw, 160px);
   font-weight: bolder;
   margin-bottom: 32px;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
