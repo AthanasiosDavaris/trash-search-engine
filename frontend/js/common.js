@@ -11,24 +11,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sets Icon based on theme
   if (currentTheme === 'dark') {
-    themeIcon.classList.remove('fa-sun');
-    themeIcon.classList.add('fa-moon');
-  }
-
-  themeToggleButton.addEventListener('click', () => {
-    currentTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.body.setAttribute('data-theme', currentTheme);
-    localStorage.setItem('theme', currentTheme);
-    
-    // Toggle the Icon
-    if (currentTheme === 'dark') {
+    if (themeIcon) {
       themeIcon.classList.remove('fa-sun');
       themeIcon.classList.add('fa-moon');
-    } else {
-      themeIcon.classList.remove('fa-moon');
-      themeIcon.classList.add('fa-sun');
     }
-  });
+  }
+
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener('click', () => {
+      // Toggles the themes
+      currentTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('theme', currentTheme);
+
+      // Toggle the Icons
+      if (currentTheme === 'dark') {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      } else {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      }
+    });
+  }
 
   // Audio Controls
   const audio = document.getElementById('theme-audio');
@@ -36,19 +41,57 @@ document.addEventListener('DOMContentLoaded', () => {
   const playPauseIcon = document.getElementById('play-pause-icon');
   const volumeSlider = document.getElementById('volume-slider');
 
-  playPauseButton.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play();
-      playPauseIcon.classList.remove('fa-play');
-      playPauseIcon.classList.add('fa-pause');
-    } else {
-      audio.pause();
-      playPauseIcon.classList.remove('fa-pause');
-      playPauseIcon.classList.add('fa-play');
-    }
-  });
+  if (playPauseButton) {
+    playPauseButton.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        playPauseIcon.classList.remove('fa-play');
+        playPauseIcon.classList.add('fa-pause');
+      } else {
+        audio.pause();
+        playPauseIcon.classList.remove('fa-pause');
+        playPauseIcon.classList.add('fa-play');
+      }
+    });
+  }
 
-  volumeSlider.addEventListener('input', (e) => {
-    audio.volume = e.target.value;
-  });
+  if (volumeSlider) {
+    volumeSlider.addEventListener('input', (e) => {
+      audio.volume = e.target.value;
+    });
+  }
+
+  // Image Modal
+  const imageModal = document.getElementById('image-modal');
+  const imageButton = document.getElementById('image-button');
+  const closeButton = document.querySelector('.close-button');
+
+  // When the user clicks the image button, open the modal
+  if (imageButton) {
+    imageButton.addEventListener('click', () => {
+      if (imageModal) {
+        imageModal.style.display = 'flex';
+      }
+    });
+  }
+
+  // When the user clicks on (x), close the modal
+  if (closeButton) {
+    closeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      
+      if (imageModal) {
+        imageModal.style.display = 'none';
+      }
+    });
+  }
+
+  // When the user clicks anywhere outside of the modal content, close it
+  if (imageModal) {
+    imageModal.addEventListener('click', (event) => {
+      if (event.target === imageModal) {
+        imageModal.style.display = 'none';
+      }
+    });
+  }
 });
