@@ -77,7 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // When the user clicks on (x), close the modal
   if (closeButton) {
-    closeButton.addEventListener('click', () => {
+    closeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      
       if (imageModal) {
         imageModal.style.display = 'none';
       }

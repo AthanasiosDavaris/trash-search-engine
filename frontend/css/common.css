@@ -230,7 +230,7 @@ body {
   transition: color 0.2s ease;
 }
 
-.close-button:hover
+.close-button:hover,
 .close-button:focus {
   color: var(--accent-color);
   text-decoration: none;
