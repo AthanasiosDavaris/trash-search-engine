@@ -1,10 +1,25 @@
 from flask import Flask
-#test########text######
+from elasticsearch import Elasticsearch
+import os
+#Connect with docker
+
+es = Elasticsearch("http://localhost:9200")
+
+#Flask initialization
+
 app = Flask(__name__)
+
+#Api endpoints
 
 @app.route("/")
 def index():
-  return {"message": "Backend server is running!"}
+    #TEST CONNECTION
+    if es.ping():
+        return {"status":"success","message":"backend is connected to elasticsearch"}
+    else:
+        return {"status":"failure","message":"backend cannot connect to elasticsearch"}
+
+#Main function
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
