@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 import os
 #Connect with docker
 
-es = Elasticsearch("http://localhost:9200")
+es = Elasticsearch("http://host.docker.internal:9200")
 
 #Flask initialization
 
