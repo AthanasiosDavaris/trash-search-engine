@@ -33,7 +33,131 @@
       </div>
 
       <!-- Middle Section: Search Bar -->
-      <div class="header-search-container"></div>
+      <div class="header-search-container">
+        <form action="search.html" method="get" class="header-search-form">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              name="query"
+              id="header-search-input"
+              class="header-search-input"
+              placeholder="Search again..."
+              value="MAGA"
+              autocomplete="off"
+            />
+            <button
+              type="button"
+              id="clear-search-button"
+              class="clear-search-button"
+            >
+              &times;
+            </button>
+          </div>
+          <button
+            type="submit"
+            class="header-search-button"
+            aria-label="Search"
+          >
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Section: Action Buttons -->
+      <div class="header-actions">
+        <button id="image-button" class="header-button" aria-label="Show Image">
+          <i class="fas fa-image"></i>
+        </button>
+        <div class="audio-controls">
+          <button
+            id="play-pause-button"
+            class="header-button"
+            aria-label="Play or Pause Audio"
+          >
+            <i id="play-pause-icon" class="fas fa-play"></i>
+          </button>
+          <input
+            type="range"
+            id="volume-slider"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            aria-label="Volume"
+          />
+        </div>
+        <audio id="theme-audio" src="audio/theme.mp3" loop></audio>
+      </div>
     </header>
+
+    <!-- Main Search Results Content -->
+    <main>
+      <div class="Results-list">
+        <!-- Currently Static / Later will be dynamically generated -->
+        <article class="search-result">
+          <p class="result-meta">
+            <span class="result-score" title="Relevance Score">15.78</span>
+            <span class="result-type">video</span>
+            <span class="result-date">2016-10-25</span>
+          </p>
+          <h2 class="result-title">Making America Great Again!</h2>
+          <p class="result-snippet">
+            ...some text from the post where we are making America great again.
+            The fake news media doesn't want you to see this but we are winning,
+            <strong>MAGA</strong> is stronger than ever before...
+          </p>
+          <div class="result-actions">
+            <button class="action-button">
+              <i class="fas fa-search-plus"></i> Find Similar
+            </button>
+            <button class="action-button">
+              <i class="fas fa-eye"></i> View Details
+            </button>
+            <button class="action-button">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </article>
+
+        <article class="search-result">
+          <p class="result-meta">
+            <span class="result-score" title="Relevance Score">12.41</span>
+            <span class="result-type">link</span>
+            <span class="result-date">2016-10-24</span>
+          </p>
+          <h2 class="result-title">Great rally in Ohio!</h2>
+          <p class="result-snippet">
+            ...a great rally today in Ohio! We love our patriots. Together we
+            will <strong>Make America Great Again</strong>! #<strong
+              >MAGA</strong
+            >
+          </p>
+          <div class="result-actions">
+            <button class="action-button">
+              <i class="fas fa-search-plus"></i> Find Similar
+            </button>
+            <button class="action-button">
+              <i class="fas fa-eye"></i> View Details
+            </button>
+            <button class="action-button">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <img src="img/set_image.jpg" alt="Display Image" />
+      </div>
+    </div>
+
+    <!-- JS files -->
+    <script src="js/common.js"></script>
+    <script src="js/search.js"></script>
   </body>
 </html>

@@ -3,12 +3,16 @@ import pandas as pd
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import os
+import sys
 
 #Configuration
 
+#Paths
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+CSV_FILE_PATH = os.path.join(PROJECT_ROOT, 'data', 'trump_posts.csv')
+
 ES_HOST = "http://localhost:9200"
 INDEX_NAME = "trash_posts"
-CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'trump_posts.csv')
 
 #Index mapping
 
@@ -18,7 +22,7 @@ INDEX_MAPPING = {
         "link_name":        { "type": "text", "analyzer": "english" },
         "status_type":      { "type": "keyword" },
         "status_link":      { "type": "keyword" },
-        "status_published": { "type": "date", "format": "MM-dd-yyyy HH:mm:ss" },
+        "status_published": { "type": "date", "format": "yyyy-MM-dd HH:mm:ss" },
         "num_reactions":    { "type": "integer" },
         "num_comments":     { "type": "integer" },
         "num_shares":       { "type": "integer" },
@@ -31,71 +35,65 @@ INDEX_MAPPING = {
     }
 }
 
+def main():
+    """Main function for indexing."""
 
-#Connect to elasticsearch
+    #Elasticsearch Connection
+    print(f"Connecting to elasticsearch at {ES_HOST}...")
+    try:
+        es = Elasticsearch(ES_HOST, request_timeout=30)
+        if not es.ping():
+            raise ConnectionError("Could not connect to elasticsearch")
+        print("Successfully connected to elasticsearch")
+    except ConnectionError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(1)
 
-try:
-    es = Elasticsearch(ES_HOST)
-    if not es.ping():
-        raise ConnectionError("Could not connect to elasticsearch")
-    print("Successfully connected to elasticsearch")
-except ConnectionError as e:
-    print(e)
-    exit()
+    #Index Creation (if it doesn't exist already)
+    if es.indices.exists(index=INDEX_NAME):
+        print(f"Index '{INDEX_NAME}' already exists. \n Deleting it for fresh start.")
+        es.indices.delete(index=INDEX_NAME)
 
+    print(f"Creating index '{INDEX_NAME}' with mapping...")
+    es.indices.create(index=INDEX_NAME, mappings=INDEX_MAPPING)
 
-#Index Creation (if it doesn't exist already)
+    print(f"Reading data from {CSV_FILE_PATH}...")
+    try:
+        #Loading CSV into pandas dataframe
+        df = pd.read_csv(CSV_FILE_PATH)
 
-if es.indices.exists(index=INDEX_NAME):
-    print(f"Index '{INDEX_NAME}' already exists. \n Deleting it for fresh start.")
-    es.indices.delete(index=INDEX_NAME)
+        #Handling missing values
+        df = df.where(pd.notnull(df), None)
 
-print(f"Creating index '{INDEX_NAME}' with mapping...")
+        print(f"Found {len(df)} documents to index.")
+    except FileNotFoundError:
+        print(f"ERROR: The file was not found at {CSV_FILE_PATH}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error has occured while reading the CSV: {e}.", file=sys.stderr)
+        sys.exit(1)
 
-es.indices.create(index=INDEX_NAME, mappings=INDEX_MAPPING)
-
-def generate_actions (df):
-    for index, row in df.iterrows():
-        doc = {
-            "_index": INDEX_NAME,
-            "_source": {
-                "status_message": row.get("status_message"),
-                "link_name": row.get("link_name"),
-                "status_type": row.get("status_type"),
-                "status_link": row.get("status_link"),
-                "status_published": row.get("status_published"),
-                "num_reactions": row.get("num_reactions"),
-                "num_comments": row.get("num_comments"),
-                "num_shares": row.get("num_shares"),
-                "num_likes": row.get("num_likes"),
-                "num_loves": row.get("num_loves"),
-                "num_wows": row.get("num_wows"),
-                "num_hahas": row.get("num_hahas"),
-                "num_sads": row.get("num_sads"),
-                "num_angrys": row.get("num_angrys"),
+    # Bulk Helper for ~efficiancy~
+    def generate_actions (dataframe):
+        """Generator function to yield documents for bulk indexing."""
+        for index, row in dataframe.iterrows():
+            yield {
+                "_index": INDEX_NAME,
+                "_source": row.to_dict(),
             }
-        }
+        
+    print("Starting bulk indexing... Sit tight and enjoy your coffee, this may take a while.")
+    try:
+        success, failed = bulk(es, generate_actions(df))
+        print(f"Successfully indexed {success} documents.")
+        if failed:
+            print(f"Failed to index {len(failed)} documents.", file=sys.stderr)
+            # If needed for debugging later:
+            # for item in failed:
+            #     print(item)
+    except Exception as e:
+        print(f"An error occurred during bulk indexing: {e}", file=sys.stderr)
+        sys.exit(1)
 
-        yield doc
-
-
-print(f"Reading data from {CSV_FILE_PATH}...")
-
-try:
-    #Loading CSV into pandas dataframe
-    df = pd.read_csv(CSV_FILE_PATH)
-
-    #Handling missing values
-    df = df.where(pd.notnull(df), None)
-    print("Starting bulk indexing of documents...")
-
-    #We use bulk helper for efficient indexing
-    success, failed = bulk(es, generate_actions(df))
-    print(f"Successfully indexed {success} documents.")
-
-    if failed:
-        print(f"Failed to index {len(failed)} documents.")
-except FileNotFoundError:
-    print(f"ERROR: The file was not found at {CSV_FILE_PATH}")
-except Exception as e:
-    print(f"An error has occured: {e}.")
+if __name__ == "__main__":
+    main()
