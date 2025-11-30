@@ -3,12 +3,15 @@ from flask_cors import CORS
 from elasticsearch import Elasticsearch
 
 # Connection with ElasticSearch
-es = Elasticsearch("http://localhost:9200")
+ES_HOST = "http://localhost:9200"
 INDEX_NAME = "trash_posts"
 
-# Flask initialization
+# ElasticSearch initialization
+es = Elasticsearch(ES_HOST, request_timeout=30)
 
+# Flask initialization
 app = Flask(__name__)
+
 # Enable CORS (so the frontend, which runs on a different port, to be able to make requests to the backend)
 CORS(app)
 
@@ -24,16 +27,26 @@ def search():
   # Create a basic ElasticSearch query.
   # This searches the 'status_message' and 'link_name' fields
   es_query = {
-    "size": 20, # Gets up to 20 results
+    "size": 20,
     "query": {
-      "match": {
-        "status_message": {
-          "query": query_text,
-          "boost": 2 # Gives more weight to matches in the main content
-        }
+      "multi_match": {
+        "query": query_text,
+        "fields": [
+          "status_message^2",
+          "link_name"
+        ]
       }
+    },
+    "highlight": {
+      "fields": {
+        "status_message": {},
+        "link_name": {}
+      },
+      "pre_tags": ["<strong>"],
+      "post_tags": ["</strong>"]
     }
   }
+
 
   # Executes the search query
   try:
@@ -42,6 +55,7 @@ def search():
     return jsonify(response['hits'])
   except Exception as e:
     # Return a detailed error message to be easy to identify
+    print(f"An error occurred with ElasticSearch: {e}")
     return jsonify({"error": f"An error occured with ElasticSearch: {str(e)}"}), 500
 
 # Main
