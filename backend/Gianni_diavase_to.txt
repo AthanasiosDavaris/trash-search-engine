@@ -1,0 +1,9 @@
+Prepei na trekseis ta parakatw
+
+1. Stamata ton flask server (Ctrl+C)
+2. Sto active venv trekse to parakatw:
+
+pip install flask-cors
+pip freeze > requirements.txt
+
+diegrapse to afou to diavaseis
