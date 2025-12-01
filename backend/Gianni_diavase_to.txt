@@ -8,6 +8,9 @@ pip freeze > requirements.txt
 
 esy twra prepei na ftiakseis:
 
+0. PRIN KANEIS OTIDHPOTE, des oti osa exw ftiaksei trexoun xwris bugs giati egw den mporw na to kanw.
+An kati den trexei, h deis oti kati den exw kanei swsta, tote kane to opws prepei na einai
+
 1. ta advanced API Endpoints, dhladh:
 Sto app.py ftiakse ta endpoints pou menoun 
 (kai to /api/import gt to ksexasa)
