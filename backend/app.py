@@ -2,39 +2,26 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from elasticsearch import Elasticsearch
 
-# Connection with ElasticSearch
+# Connections and initializations
 ES_HOST = "http://localhost:9200"
 INDEX_NAME = "trash_posts"
-
-# ElasticSearch initialization
 es = Elasticsearch(ES_HOST, request_timeout=30)
-
-# Flask initialization
 app = Flask(__name__)
-
-# Enable CORS (so the frontend, which runs on a different port, to be able to make requests to the backend)
 CORS(app)
 
 # API Endpoints
 @app.route("/api/search")
 def search():
-  # Get the search query from the URL
   query_text = request.args.get("query", "")
-
   if not query_text:
     return jsonify({"error": "A 'query' parameter is required."}), 400
   
-  # Create a basic ElasticSearch query.
-  # This searches the 'status_message' and 'link_name' fields
   es_query = {
     "size": 20,
     "query": {
       "multi_match": {
         "query": query_text,
-        "fields": [
-          "status_message^2",
-          "link_name"
-        ]
+        "fields": ["status_message^2","link_name"]
       }
     },
     "highlight": {
@@ -46,17 +33,48 @@ def search():
       "post_tags": ["</strong>"]
     }
   }
-
-
-  # Executes the search query
   try:
     response = es.search(index=INDEX_NAME, body=es_query)
-    # Return the 'hits' object that contains the results
     return jsonify(response['hits'])
   except Exception as e:
-    # Return a detailed error message to be easy to identify
-    print(f"An error occurred with ElasticSearch: {e}")
     return jsonify({"error": f"An error occured with ElasticSearch: {str(e)}"}), 500
+  
+
+# Delete Endpoints
+@app.route("/api/delete/<post_id>", methods=['DELETE'])
+def delete_post(post_id):
+  try:
+    es.delete(index=INDEX_NAME, id=post_id)
+    return jsonify({"status": "success", "message": f"Post with ID {post_id} was deleted."})
+  except NotFoundError:
+    return jsonify({"status": "error", "message": "Post not found."}), 404
+  except Exception as e:
+    return jsonify({"status": "error", "message": str(e)}), 500
+
+# Similar Endpoints
+@app.route("/api/similar/<post_id>")
+def find_similar(post_id):
+  mlt_query = {
+    "size": 10,
+    "query": {
+      "more_like_this": {
+        "fields": ["status_message", "link_name"],
+        "like": [
+          {
+            "_index": INDEX_NAME,
+            "_id": post_id
+          }
+        ],
+        "min_term_freq": 1,
+        "max_query_terms": 12
+      }
+    }
+  }
+  try:
+    response = es.search(index=INDEX_NAME, body=mlt_query)
+    return jsonify(response['hits'])
+  except Exception as e:
+    return jsonify({"error": str(e)}), 500
 
 # Main
 if __name__ == "__main__":

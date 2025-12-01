@@ -6,4 +6,13 @@ Prepei na trekseis ta parakatw
 pip install flask-cors
 pip freeze > requirements.txt
 
+esy twra prepei na ftiakseis:
+
+1. ta advanced API Endpoints, dhladh:
+Sto app.py ftiakse ta endpoints pou menoun 
+(kai to /api/import gt to ksexasa)
+
+2. enysxise to /api/search etsi wste na dexetai json objects me multiple rules
+(dld complex queries pou kaname sto mathima)
+
 diegrapse to afou to diavaseis
