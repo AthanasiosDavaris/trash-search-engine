@@ -22,7 +22,7 @@ INDEX_MAPPING = {
         "link_name":        { "type": "text", "analyzer": "english" },
         "status_type":      { "type": "keyword" },
         "status_link":      { "type": "keyword" },
-        "status_published": { "type": "date", "format": "yyyy-MM-dd HH:mm:ss" },
+        "status_published": { "type": "date", "format": "MM/dd/yyyy HH:mm:ss" },
         "num_reactions":    { "type": "integer" },
         "num_comments":     { "type": "integer" },
         "num_shares":       { "type": "integer" },
@@ -61,11 +61,34 @@ def main():
     try:
         #Loading CSV into pandas dataframe
         df = pd.read_csv(CSV_FILE_PATH)
+        initial_doc_count = len(df)
+        print(f"Found {initial_doc_count} total rows in the CSV file")
+
+        #Checking for incorrect format rows in the CSV file
+        df.dropna(how='all', inplace=True)
+
+        df.dropna(subset=['status_published'], inplace=True)
+
+        final_doc_count = len(df)
+        skipped_rows = initial_doc_count - final_doc_count
+        if skipped_rows > 0:
+            print(f"Skipped {skipped_rows} rows due to being empty or missing a publication date")
+
+        #Numeric conversion
+        numeric_cols = ['num_reactions', 'num_comments', 'num_shares', 'num_likes', 'num_loves', 'num_wows', 'num_hahas', 'num_sads', 'num_angrys']
+        for col in numeric_cols:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+        
+        #Dropping the rows where the numeric conversion fails
+        df.dropna(subset=numeric_cols, inplace=True)
+
+        #Converting floats to integers
+        df[numeric_cols] = df[numeric_cols].astype(int)
 
         #Handling missing values
         df = df.where(pd.notnull(df), None)
 
-        print(f"Found {len(df)} documents to index.")
+        print(f"Found {len(df)} valid documents to index.")
     except FileNotFoundError:
         print(f"ERROR: The file was not found at {CSV_FILE_PATH}", file=sys.stderr)
         sys.exit(1)
@@ -88,9 +111,6 @@ def main():
         print(f"Successfully indexed {success} documents.")
         if failed:
             print(f"Failed to index {len(failed)} documents.", file=sys.stderr)
-            # If needed for debugging later:
-            # for item in failed:
-            #     print(item)
     except Exception as e:
         print(f"An error occurred during bulk indexing: {e}", file=sys.stderr)
         sys.exit(1)
