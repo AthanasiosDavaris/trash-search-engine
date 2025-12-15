@@ -1,7 +1,7 @@
 #Index data (yes very self explanatory)
 import pandas as pd
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
+from elasticsearch.helpers import bulk, BulkIndexError
 import os
 import sys
 
@@ -22,7 +22,7 @@ INDEX_MAPPING = {
         "link_name":        { "type": "text", "analyzer": "english" },
         "status_type":      { "type": "keyword" },
         "status_link":      { "type": "keyword" },
-        "status_published": { "type": "date", "format": "MM/dd/yyyy HH:mm:ss" },
+        "status_published": { "type": "date", "format": "M/d/yyyy H:mm:ss || M/d/yy H:mm" },
         "num_reactions":    { "type": "integer" },
         "num_comments":     { "type": "integer" },
         "num_shares":       { "type": "integer" },
@@ -107,10 +107,14 @@ def main():
         
     print("Starting bulk indexing... Sit tight and enjoy your coffee, this may take a while.")
     try:
-        success, failed = bulk(es, generate_actions(df))
+        success, _ = bulk(es, generate_actions(df), stats_only=True, raise_on_error=True)
         print(f"Successfully indexed {success} documents.")
-        if failed:
-            print(f"Failed to index {len(failed)} documents.", file=sys.stderr)
+    except BulkIndexError as e:
+        print(f"Failed to index {len(e.errors)} documents.", file=sys.stderr)
+        print("--- Showing details for the first 5 failures ---", file=sys.stderr)
+        for i,error in enumerate(e.errors):
+            if i >= 5: break
+            print(f"Failure {i+1}: {error['index']['error']}", file=sys.stderr)
     except Exception as e:
         print(f"An error occurred during bulk indexing: {e}", file=sys.stderr)
         sys.exit(1)
