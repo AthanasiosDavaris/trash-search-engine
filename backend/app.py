@@ -1,6 +1,8 @@
+import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, NotFoundError
+from elasticsearch.helpers import bulk, BulkIndexError
 
 # Connections and initializations
 ES_HOST = "http://localhost:9200"
@@ -37,6 +39,7 @@ def search():
     response = es.search(index=INDEX_NAME, body=es_query)
     return jsonify(response['hits'])
   except Exception as e:
+    print(f"an error occured with elasticsearch: {e}")
     return jsonify({"error": f"An error occured with ElasticSearch: {str(e)}"}), 500
   
 
@@ -45,13 +48,13 @@ def search():
 def delete_post(post_id):
   try:
     es.delete(index=INDEX_NAME, id=post_id)
-    return jsonify({"status": "success", "message": f"Post with ID {post_id} was deleted."})
+    return jsonify({"status": "success", "message": f"Post with ID: {post_id} was deleted."})
   except NotFoundError:
-    return jsonify({"status": "error", "message": "Post not found."}), 404
+    return jsonify({"status": "error", "message": "Post not found"}), 404
   except Exception as e:
     return jsonify({"status": "error", "message": str(e)}), 500
 
-# Similar Endpoints
+# Search for Similar Endpoints
 @app.route("/api/similar/<post_id>")
 def find_similar(post_id):
   mlt_query = {
@@ -59,14 +62,9 @@ def find_similar(post_id):
     "query": {
       "more_like_this": {
         "fields": ["status_message", "link_name"],
-        "like": [
-          {
-            "_index": INDEX_NAME,
-            "_id": post_id
-          }
-        ],
-        "min_term_freq": 1,
-        "max_query_terms": 12
+        "like": [{"_index": INDEX_NAME, "_id": post_id}],
+        #"min_term_freq": 1,
+        "max_query_terms": 15
       }
     }
   }
@@ -75,6 +73,40 @@ def find_similar(post_id):
     return jsonify(response['hits'])
   except Exception as e:
     return jsonify({"error": str(e)}), 500
+  
+# Import Endpoint
+@app.route("/api/import", methods=['POST'])
+def import_posts():
+  if 'csv_file' not in request.files:
+    return jsonify({"error": "No CSV file part in the request."}), 400
+  
+  file = request.files['csv_file']
+  if file.filename == '':
+    return jsonify({"error": "No selected file."}), 400
+  
+  try:
+    df = pd.read_csv(file)
+    df.dropna(how='all', inplace=True)
+    df.dropna(subset=['status_published'], inplace=True)
+    numeric_cols = ['num_reactions', 'num_comments', 'num_shares', 'num_likes', 'num_loves', 'num_wows', 'num_hahas', 'num_sads', 'num_angrys']
+
+    for col in numeric_cols:
+      df[col] = pd.to_numeric(df[col], errors='coerce')
+    
+    df.dropna(subset=numeric_cols, inplace=True)
+    df[numeric_cols] = df[numeric_cols].astype(int)
+    df = df.where(pd.notnull(df), None)
+
+    def generate_actions(dataframe):
+      for index, row in dataframe.iterrows():
+        yield {"_index": INDEX_NAME, "_source": row.to_dict()}
+
+    success, failed = bulk(es, generate_actions(df))
+    return jsonify({"status": "success", "message": f"Import complete. Successfully indexed {success} documents", "failed_count": len(failed)})
+  except BulkIndexError as e:
+    return jsonify({"error": "Bulk indexing failed.", "details": str(e.errors)}), 500
+  except Exception as e:
+    return jsonify({"error": f"An error has occurred: {str(e)}"}), 500
 
 # Main
 if __name__ == "__main__":
