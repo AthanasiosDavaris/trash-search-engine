@@ -47,7 +47,7 @@ def search():
         "link_name": {}
       },
       "pre_tags": ["<strong>"],
-      "post_tage": ["</strong>"]
+      "post_tags": ["</strong>"]
     }
   }
 
