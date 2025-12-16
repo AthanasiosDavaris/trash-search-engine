@@ -22,12 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and Display Results
   const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get('query');
+
   if (query) {
     if (searchInput) {
       searchInput.value = query;
       toggleClearButton();
     }
-    // fetchResults(query); This feature is not ready ---
+    fetchResults(query);
   } else {
     const resultsList = document.getElementById('results-list');
     if (resultsList) {
@@ -55,25 +56,96 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Function that handles clicks on the results list
- * @param {Event} event - The click event.
+ * Fetches search results from the backend API
+ * @param {string} - query The search term.
  */
-function handleResultClick(event) {
-  const button = event.target.closest('.action-button');
-  if (!button) return; // If the click was not on a button
+async function fetchResults(query) {
+  const resultsList = document.getElementById('results-list');
+  if (!resultsList) return;
 
-  const resultArticle = button.closest('.search-result');
-  // const postId = resultArticle.dataset.id; this feature is not ready ---
+  // immediate feedback to the user
+  resultsList.innerHTML = `<p class="loading-message">Searching for "<strong>${query}</strong>"...</p>`;
 
-  if (button.classList.contains('delete-button')) {
-    alert('Delete button clicked!');
-    // handleDelete(postId, resultArticle); this feature is not ready ---
-  } else if (button.classList.contains('find-similar-button')) {
-    alert('Find Similar button clicked!');
-    // fetchSimilar(postId); this feature is not ready ---
-  } else if (button.classList.contains('view-details-button')) {
-    alert('View Details button clicked!');
-    // showDetails(postId); this feature is not ready ---
+  try {
+    apiUrl = `http://localhost:5000/api/search?query=${encodeURIComponent(query)}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    renderResults(data.hits);
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    resultsList.innerHTML = '<p class="error-message">Sorry, something went wrong. The backend server might not be running or is unreachable.</p>';
   }
 }
+
+/**
+ * Renders the search results on the page
+ * @param {Array} - hits the array 
+ */
+function renderResults(hits) {
+  const resultsList = document.getElementById('results-list');
+  if (!resultsList) return;
+
+  allHitsData = {};
+  resultsList.innerHTML = '';
+
+  if (hits.length === 0) {
+    resultsList.innerHTML = '<p>No results found for your query.</p>';
+    return;
+  }
+
+  // Loops through each result and creates the html for it
+  hits.forEach(hit => {
+    allHitsData[hit._id] = hit._source;
+
+    const post = hit._source;
+    const score = hit._score;
+
+    const snippet = hit.highlight && hit.highlight.status_message
+      ? hit.highlight.status_message[0]
+      : (post.status_message || 'No content available.').substring(0, 280) + '...';
+
+    const resultElement = document.createElement('article');
+    resultElement.className = 'search-result';
+    resultElement.dataset.id = hit._id;
+
+    resultElement.innerHTML = `
+      <p class="result-meta">
+        <span class="result-score" title="Relevance Score">${score.toFixed(2)}</span> | 
+        <span class="result-type">${post.status_type || 'N/A'}</span> | 
+        <span class="result-date">${new Date(post.status_published).toLocaleDateString()}</span>
+      </p>
+      <h2 class="result-title">${post.link_name || 'Untitled Post'}</h2>
+      <p class="result-snippet">${snippet}</p> <!-- Use the generated snippet -->
+      <div class="result-actions">
+        <button class="action-button find-similar-button"><i class="fas fa-search-plus"></i> Find Similar</button>
+        <button class="action-button view-details-button"><i class="fas fa-eye"></i> View Details</button>
+        <button class="action-button delete-button"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+    `;
+    resultsList.appendChild(resultElement);
+  });
+}
+
+// Placeholder function that will handle button clicks
+function handleResultClick(event) {
+  const button = event.target.closest('.action-btn');
+  if (!button) return;
+
+  const resultArticle = button.closest('.search-result');
+  const postID = resultArticle.dataset.id;
+
+  if (button.classList.contains('delete-button')) {
+    alert(`(Placeholder) Clicked DELETE on post ID: ${postId}`);
+  } else if (button.classList.contains('find-similar-button')) {
+    alert(`(Placeholder) Clicked FIND SIMILAR on post ID: ${postId}`);
+  } else if (button.classList.contains('view-details-button')) {
+    alert(`(Placeholder) Clicked VIEW DETAILS on post ID: ${postId}`);
+  }
+}
+
 
