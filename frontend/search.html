@@ -88,6 +88,14 @@
           />
         </div>
         <audio id="theme-audio" src="audio/theme.mp3" loop></audio>
+
+        <button
+          id="theme-toggle-button"
+          class="header-button"
+          aria-label="Toggle Light or Dark Mode"
+        >
+          <i id="theme-icon" class="fas fa-sun"></i>
+        </button>
       </div>
     </header>
 
@@ -108,13 +116,13 @@
             <strong>MAGA</strong> is stronger than ever before...
           </p>
           <div class="result-actions">
-            <button class="action-button">
+            <button class="action-button find-similar-button">
               <i class="fas fa-search-plus"></i> Find Similar
             </button>
-            <button class="action-button">
+            <button class="action-button view-details-button">
               <i class="fas fa-eye"></i> View Details
             </button>
-            <button class="action-button">
+            <button class="action-button delete-button">
               <i class="fas fa-trash"></i> Delete
             </button>
           </div>
@@ -134,13 +142,13 @@
             >
           </p>
           <div class="result-actions">
-            <button class="action-button">
+            <button class="action-button find-similar-button">
               <i class="fas fa-search-plus"></i> Find Similar
             </button>
-            <button class="action-button">
+            <button class="action-button view-details-button">
               <i class="fas fa-eye"></i> View Details
             </button>
-            <button class="action-button">
+            <button class="action-button delete-button">
               <i class="fas fa-trash"></i> Delete
             </button>
           </div>
@@ -161,7 +169,7 @@
     <!-- Image Modal -->
     <div id="image-modal" class="modal-overlay">
       <div class="modal-content">
-        <span class="close-button">&times;</span>
+        <span class="close-button image-close-button">&times;</span>
         <img src="img/set_image.jpg" alt="Display Image" />
       </div>
     </div>

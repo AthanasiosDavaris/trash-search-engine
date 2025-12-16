@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const playPauseIcon = document.getElementById('play-pause-icon');
   const volumeSlider = document.getElementById('volume-slider');
 
-  if (playPauseButton) {
+  if (playPauseButton && audio) {
     playPauseButton.addEventListener('click', () => {
       if (audio.paused) {
         audio.play();
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (volumeSlider) {
+  if (volumeSlider && audio) {
     volumeSlider.addEventListener('input', (e) => {
       audio.volume = e.target.value;
     });
@@ -64,25 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Image Modal
   const imageModal = document.getElementById('image-modal');
   const imageButton = document.getElementById('image-button');
-  const closeButton = document.querySelector('.close-button');
+  const imageCloseButton = document.querySelector('.image-close-button');
 
   // When the user clicks the image button, open the modal
-  if (imageButton) {
+  if (imageButton && imageModal) {
     imageButton.addEventListener('click', () => {
-      if (imageModal) {
-        imageModal.style.display = 'flex';
-      }
+      imageModal.style.display = 'flex';
     });
   }
 
   // When the user clicks on (x), close the modal
-  if (closeButton) {
-    closeButton.addEventListener('click', (event) => {
-      event.stopPropagation();
-      
-      if (imageModal) {
-        imageModal.style.display = 'none';
-      }
+  if (imageCloseButton && imageModal) {
+    imageCloseButton.addEventListener('click', () => {
+      imageModal.style.display = 'none';
     });
   }
 
