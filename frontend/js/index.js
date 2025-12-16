@@ -11,9 +11,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Logic for the Random Post Button
   const randomPostButton = document.getElementById('random-post-button');
   if (randomPostButton) {
-    randomPostButton.addEventListener('click', () => {
-      // Placeholder
-      alert("This will show a random post soon!");
+    randomPostButton.addEventListener('click', async () => {
+      const originalButtonContent = randomPostButton.innerHTML;
+      randomPostButton.innerHTML = 'Feeling Lucky...';
+      randomPostButton.disabled = true;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/random');
+        if (!response.ok) {
+          throw new Error(`Server responded with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const post = data._source;
+        if (post && post.status_link && post.status_link.startsWith('http')) {
+          window.open(post.status_link, '_blank');
+        } else {
+          alert('The random post found does not have a valid link to open.');
+        }
+
+      } catch (error) {
+        console.error('Error fetching random post:', error);
+        alert('Could not fetch a random post. Please ensure the backend server is running.');
+      } finally {
+        randomPostButton.innerHTML = originalButtonContent;
+        randomPostButton.disabled = false;
+      }
     });
   }
 
