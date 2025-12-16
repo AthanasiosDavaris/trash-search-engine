@@ -157,6 +157,32 @@ def import_posts():
   except Exception as e:
     return jsonify({"error": f"An error has occurred: {str(e)}"}), 500
 
+# Random Endpoint
+# Returns a single random post from the index (Used in the 'Im feeling lucky button')
+
+@app.route("/api/random", methods=['GET'])
+def get_random_post():
+  random_query= {
+    "size": 1,
+    "query": {
+      "function_score": {
+        "functions": [{"random_score": {}}],
+        "boost_mode": "replace"
+      }
+    }
+  }
+
+  try:
+    response = es.search(index=INDEX_NAME, body=random_query)
+
+    if not response['hits']['hits']:
+      return jsonify({"error": "No posts found in the index."}), 404
+    
+    return jsonify(response['hits']['hits'][0])
+  except Exception as e:
+    print(f"Error random post retrieval failed: {e}")
+    return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 # Main
 if __name__ == "__main__":
   app.run(debug=True)
