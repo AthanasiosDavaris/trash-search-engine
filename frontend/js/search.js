@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and Display Results
   const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get('query');
-
   if (query) {
     if (searchInput) {
       searchInput.value = query;
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Fetches search results from the backend API
- * @param {string} - query The search term.
+ * @param {string} query - The search term.
  */
 async function fetchResults(query) {
   const resultsList = document.getElementById('results-list');
@@ -84,7 +83,7 @@ async function fetchResults(query) {
 
 /**
  * Renders the search results on the page
- * @param {Array} - hits the array 
+ * @param {Array} hits - hits the array
  */
 function renderResults(hits) {
   const resultsList = document.getElementById('results-list');
@@ -131,21 +130,58 @@ function renderResults(hits) {
   });
 }
 
-// Placeholder function that will handle button clicks
-function handleResultClick(event) {
-  const button = event.target.closest('.action-btn');
-  if (!button) return;
-
-  const resultArticle = button.closest('.search-result');
-  const postId = resultArticle.dataset.id;
-
-  if (button.classList.contains('delete-button')) {
-    alert(`(Placeholder) Clicked DELETE on post ID: ${postId}`);
-  } else if (button.classList.contains('find-similar-button')) {
-    alert(`(Placeholder) Clicked FIND SIMILAR on post ID: ${postId}`);
-  } else if (button.classList.contains('view-details-button')) {
-    alert(`(Placeholder) Clicked VIEW DETAILS on post ID: ${postId}`);
+/**
+ * Handles the Delete button.
+ * @param {string} postId - The ID of the post to delete 
+ * @param {HTMLElement} elementToRemove - The HTML element to remove from the database.
+ */
+function handleDelete(postId, elementToRemove) {
+  if(confirm(`Are you sure you want to delete this post? This action cannot be undone.`)) {
+    fetch(`http://localhost:5000/api/delete/${postId}`, {method: 'DELETE'})
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert(data.message);
+          elementToRemove.style.transition = 'opacity 0.5s ease';
+          elementToRemove.style.opacity = '0';
+          setTimeout(() => elementToRemove.remove(), 500);
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting post:', error);
+        alert('An error occurred while trying to delete the post.');
+      });
   }
 }
 
+/**
+ * Fetches and displays posts similar to the given post ID.
+ * @param {string} postId - The ID of the post to find similar ones to.
+ */
+function fetchSimilar(postId) {
+  const postTitle = allHitsData[postId]?.link_name || `post ${postId}`;
+  fetchResults(`posts similar to "${postTitle}"`,
+`http://localhost:5000/api/similar/${postId}`);
+}
 
+/**
+ * Displays the full details of a post in a modal.
+ * @param {string} postId - The ID of the post to show details for.
+ */
+function showDetails(postId) {
+  const postData = allHitsData[postId];
+  if (!postData) {
+    alert('Could not find details for this post.');
+    return;
+  }
+
+  const modalTitle = document.getElementById('details-modal-title');
+  const modalBody = document.getElementById('details-modal-body');
+  const detailsModal = document.getElementById('details-modal');
+
+  modalTitle.textContent = postData.link_name || 'Post Details';
+  modalBody.innerHTML =  `<pre>${JSON.stringify(postData, null, 2)}</pre>`;
+  detailsModal.style.display = 'flex';
+}
