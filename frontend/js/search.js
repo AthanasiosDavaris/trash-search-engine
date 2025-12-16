@@ -215,6 +215,34 @@ function showDetails(postId) {
   const detailsModal = document.getElementById('details-modal');
 
   modalTitle.textContent = postData.link_name || 'Post Details';
-  modalBody.innerHTML =  `<pre>${JSON.stringify(postData, null, 2)}</pre>`;
+
+  modalBody.innerHTML = '';
+
+  const list = document.createElement('dl');
+
+  for (const [key, value] of Object.entries(postData)) {
+    const dt = document.createElement('dt');
+    dt.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+    const dd = document.createElement('dd');
+
+    const displayValue = value !== null ? value : 'N/A';
+
+    if (typeof displayValue === 'string' && displayValue.startsWith('http')) {
+      const link = document.createElement('a');
+      link.href = displayValue;
+      link.textContent = displayValue;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      dd.appendChild(link);
+    } else {
+      dd.textContent = displayValue;
+    }
+
+    list.appendChild(dt);
+    list.appendChild(dd);
+  }
+
+  modalBody.appendChild(list);
   detailsModal.style.display = 'flex';
 }

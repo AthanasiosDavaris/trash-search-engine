@@ -194,3 +194,34 @@ main {
   max-height: 60vh;
   overflow-y: auto;
 }
+
+#details-modal-body dl {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px 20px;
+}
+
+#details-modal-body dt {
+  font-weight: 700;
+  color: var(--primary-color);
+  grid-column: 1;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#details-modal-body dd {
+  grid-column: 2;
+  margin: 0;
+  word-break: break-word;
+}
+
+#detail-modals-body dd a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+#detail-modals-body dd a:hover {
+  text-decoration: underline;
+}
