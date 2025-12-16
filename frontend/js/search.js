@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchInput.value = query;
       toggleClearButton();
     }
-    fetchResults(query);
+    // fetchResults(query); This feature is not ready ---
   } else {
     const resultsList = document.getElementById('results-list');
     if (resultsList) {
@@ -63,14 +63,17 @@ function handleResultClick(event) {
   if (!button) return; // If the click was not on a button
 
   const resultArticle = button.closest('.search-result');
-  const postId = resultArticle.dataset.id;
+  // const postId = resultArticle.dataset.id; this feature is not ready ---
 
   if (button.classList.contains('delete-button')) {
-    handleDelete(postId, resultArticle);
+    alert('Delete button clicked!');
+    // handleDelete(postId, resultArticle); this feature is not ready ---
   } else if (button.classList.contains('find-similar-button')) {
-    fetchSimilar(postId);
+    alert('Find Similar button clicked!');
+    // fetchSimilar(postId); this feature is not ready ---
   } else if (button.classList.contains('view-details-button')) {
-    showDetails(postId);
+    alert('View Details button clicked!');
+    // showDetails(postId); this feature is not ready ---
   }
 }
 
