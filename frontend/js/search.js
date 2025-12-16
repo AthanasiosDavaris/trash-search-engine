@@ -137,7 +137,7 @@ function handleResultClick(event) {
   if (!button) return;
 
   const resultArticle = button.closest('.search-result');
-  const postID = resultArticle.dataset.id;
+  const postId = resultArticle.dataset.id;
 
   if (button.classList.contains('delete-button')) {
     alert(`(Placeholder) Clicked DELETE on post ID: ${postId}`);
