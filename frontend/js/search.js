@@ -180,10 +180,23 @@ function handleDelete(postId, elementToRemove) {
  * Fetches and displays posts similar to the given post ID.
  * @param {string} postId - The ID of the post to find similar ones to.
  */
-function fetchSimilar(postId) {
+async function fetchSimilar(postId) {
+  const resultsList = document.getElementById('results-list');
+  if (!resultsList) return;
+
   const postTitle = allHitsData[postId]?.link_name || `post ${postId}`;
-  fetchResults(`posts similar to "${postTitle}"`,
-`http://localhost:5000/api/similar/${postId}`);
+  resultsList.innerHTML = `<p class="loading-message">Finding posts similar to "<strong>${postTitle}</strong>"...</p>`;
+
+  try {
+    const apiURL = `http://localhost:5000/api/similar/${postId}`;
+    const response = await fetch(apiURL);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    renderResults(data.hits);
+  } catch (error) {
+    console.error("Error fetching similar posts:", error);
+    resultsList.innerHTML = '<p class="error-message">Could not fetch similar posts.</p>';
+  }
 }
 
 /**
