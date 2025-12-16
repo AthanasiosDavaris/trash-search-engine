@@ -11,7 +11,16 @@ es = Elasticsearch(ES_HOST, request_timeout=30)
 app = Flask(__name__)
 CORS(app)
 
-# API Endpoints
+#--------------------API Endpoints---------------------
+
+# Search Endpoints
+# Search an endpoint with Boolean Logic, Phrase search and Filters (ex. number of likes)
+# 
+# Method GET: For simple queries (URL parameter '?query=...')
+# Method POST: For complex queries (JSON body {"query": "...", "filters": {...}})
+# 
+# Return: JSON list of hits
+
 @app.route("/api/search", methods=['GET', 'POST'])
 def search():
   query_text = ""
@@ -73,6 +82,8 @@ def search():
   
 
 # Delete Endpoints
+# Delete a specific post using its ID
+
 @app.route("/api/delete/<post_id>", methods=['DELETE'])
 def delete_post(post_id):
   try:
@@ -84,6 +95,8 @@ def delete_post(post_id):
     return jsonify({"status": "error", "message": str(e)}), 500
 
 # Search for Similar Endpoints
+# Finds posts similar to given ID using 'More Like This'
+
 @app.route("/api/similar/<post_id>")
 def find_similar(post_id):
   mlt_query = {
@@ -100,10 +113,14 @@ def find_similar(post_id):
   try:
     response = es.search(index=INDEX_NAME, body=mlt_query)
     return jsonify(response['hits'])
+  except NotFoundError:
+    return jsonify({"error": "Post not found to compare against."}), 404
   except Exception as e:
     return jsonify({"error": str(e)}), 500
   
 # Import Endpoint
+# Accepts a CSV file upload, parses it and bulk indexes it into Elasticsearch
+
 @app.route("/api/import", methods=['POST'])
 def import_posts():
   if 'csv_file' not in request.files:
@@ -112,6 +129,9 @@ def import_posts():
   file = request.files['csv_file']
   if file.filename == '':
     return jsonify({"error": "No selected file."}), 400
+  
+  if not file.filename.endswith('.csv'):
+    return jsonify({"error": "Invalid file type must be a CSV file."}), 400
   
   try:
     df = pd.read_csv(file)
