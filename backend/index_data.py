@@ -18,8 +18,8 @@ INDEX_NAME = "trash_posts"
 
 INDEX_MAPPING = {
     "properties": {
-        "status_message":   { "type": "text", "analyzer": "english" },
-        "link_name":        { "type": "text", "analyzer": "english" },
+        "status_message":   { "type": "text", "analyzer": "english", "term_vector": "with_positions_offsets" },
+        "link_name":        { "type": "text", "analyzer": "english", "term_vector": "with_positions_offsets" },
         "status_type":      { "type": "keyword" },
         "status_link":      { "type": "keyword" },
         "status_published": { "type": "date", "format": "M/d/yyyy H:mm:ss || M/d/yy H:mm" },
