@@ -55,6 +55,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
+ * Main function that handles clicks on each result.
+ * @param {Event} event - The click event.
+ */
+function handleResultClick(event) {
+  const button = event.target.closest('.action-button');
+  if (!button) return;
+
+  const resultArticle = button.closest('.search-result');
+  const postId = resultArticle.dataset.id;
+
+  if (button.classList.contains('delete-button')) {
+    handleDelete(postId, resultArticle);
+  } else if (button.classList.contains('find-similar-button')) {
+    fetchSimilar(postId);
+  } else if (button.classList.contains('view-details-button')) {
+    showDetails(postId);
+  }
+}
+
+/**
  * Fetches search results from the backend API
  * @param {string} query - The search term.
  */
