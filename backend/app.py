@@ -12,18 +12,24 @@ app = Flask(__name__)
 CORS(app)
 
 # API Endpoints
-@app.route("/api/search")
+@app.route("/api/search", methods=['GET', 'POST'])
 def search():
-  query_text = request.args.get("query", "")
-  if not query_text:
-    return jsonify({"error": "A 'query' parameter is required."}), 400
+  query_text = ""
+  filters = {}
+
+  if request.method == 'POST' and request.is_json:
+    data = request.get_json()
+    query_text = data.get('query', "")
+    filters = data.get('filters', {})
+  else:
+    query_text = request.args.get("query", "")
   
   es_query = {
     "size": 20,
     "query": {
-      "multi_match": {
-        "query": query_text,
-        "fields": ["status_message^2","link_name"]
+      "bool": {
+        "must": [],
+        "filter": [],
       }
     },
     "highlight": {
@@ -32,15 +38,38 @@ def search():
         "link_name": {}
       },
       "pre_tags": ["<strong>"],
-      "post_tags": ["</strong>"]
+      "post_tage": ["</strong>"]
     }
   }
+
+  if query_text:
+    es_query["query"]["bool"]["must"].append({
+      "simple_query_string": {
+        "query": query_text,
+        "fields": ["status_message^2", "link_name"],
+        "default_operator": "AND"
+      }
+    })
+  else:
+    es_query["query"]["bool"]["must"].append({"match_all": {}})
+
+  for field, criteria in filters.items():
+    range_query = {"range": {field: {}}}
+
+    if "min" in criteria:
+      range_query["range"][field]["gte"] = criteria["min"]
+    if "max" in criteria:
+      range_query["range"][field]["lte"] = criteria["max"]
+
+    if range_query["range"][field]:
+      es_query["query"]["bool"]["filter"].append(range_query)
+  
   try:
     response = es.search(index=INDEX_NAME, body=es_query)
     return jsonify(response['hits'])
   except Exception as e:
-    print(f"an error occured with elasticsearch: {e}")
-    return jsonify({"error": f"An error occured with ElasticSearch: {str(e)}"}), 500
+    print(f"Elasticsearch error: {e}")
+    return jsonify({"error": f"An error occurred with Elasticsearch: {str(e)}"}), 500
   
 
 # Delete Endpoints
