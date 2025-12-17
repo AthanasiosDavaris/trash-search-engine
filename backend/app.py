@@ -63,15 +63,20 @@ def search():
     es_query["query"]["bool"]["must"].append({"match_all": {}})
 
   for field, criteria in filters.items():
-    range_query = {"range": {field: {}}}
-
-    if "min" in criteria:
-      range_query["range"][field]["gte"] = criteria["min"]
-    if "max" in criteria:
-      range_query["range"][field]["lte"] = criteria["max"]
-
-    if range_query["range"][field]:
-      es_query["query"]["bool"]["filter"].append(range_query)
+    if "is" in criteria:
+      es_query["query"]["bool"]["filter"].append({\
+        "term": {
+          f"{field}.keyword": criteria["is"]
+        }
+      })
+    else:
+      range_query = {"range": {field: {}}}
+      if "min" in criteria:
+        range_query["range"][field]["gte"] = criteria["min"]
+      if "max" in criteria:
+        range_query["range"][field]["lte"] = criteria["max"]
+      if range_query["range"][field]:
+        es_query["query"]["bool"]["filter"].append(range_query)
   
   try:
     response = es.search(index=INDEX_NAME, body=es_query)

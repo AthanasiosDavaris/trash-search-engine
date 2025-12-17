@@ -330,6 +330,31 @@ main {
   padding-top: 24px;
 }
 
+.builder-controls .logic-selector select {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.builder-controls .primary-search-button {
+  padding: 10px 19px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.builder-controls .primary-search-button:hover {
+  background-color: rgb(0, 74, 124);
+}
+
 .logic-selector {
   display: flex;
   align-items: center;

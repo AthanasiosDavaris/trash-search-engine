@@ -22,7 +22,7 @@ INDEX_MAPPING = {
         "link_name":        { "type": "text", "analyzer": "english", "term_vector": "with_positions_offsets" },
         "status_type":      { "type": "keyword" },
         "status_link":      { "type": "keyword" },
-        "status_published": { "type": "date", "format": "M/d/yyyy H:mm:ss || M/d/yy H:mm" },
+        "status_published": { "type": "date", "format": "M/d/yyyy H:mm:ss || M/d/yy H:mm || yyyy-MM-dd" },
         "num_reactions":    { "type": "integer" },
         "num_comments":     { "type": "integer" },
         "num_shares":       { "type": "integer" },
