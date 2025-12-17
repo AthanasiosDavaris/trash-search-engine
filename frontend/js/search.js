@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleButton = document.getElementById('toggle-advanced-search-button');
   const advancedSearchContainer = document.getElementById('advanced-search-container');
   const addRuleButton = document.getElementById('add-rule-button');
-  const executeAdvancedSearchButton = document.getElementById('execute-advanced-search-btn');
+  const executeAdvancedSearchButton = document.getElementById('execute-advanced-search-button');
 
   if (toggleButton && advancedSearchContainer) {
     toggleButton.addEventListener('click', () => {
