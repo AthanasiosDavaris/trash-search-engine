@@ -157,6 +157,20 @@
           <a href="terms.html" class="footer-link">Terms of Service</a>
         </div>
       </div>
+
+      <div class="footer-import-section">
+        <form id="import-form">
+          <label for="csv-file-input">Import New Posts:</label>
+          <input
+            type="file"
+            id="csv-file-input"
+            name="csv_file"
+            accept=".csv"
+          />
+          <button type="submit" id="import-button">Upload</button>
+        </form>
+        <p id="import-status-message"></p>
+      </div>
     </footer>
 
     <!-- Link to Common JS file -->

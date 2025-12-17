@@ -241,3 +241,62 @@ body {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+
+.footer-import-section {
+  border-top: 1px solid var(--border-color);
+  margin-top: 24px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+#import-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#import-form label {
+  font-weight: 600;
+}
+
+#import-form input[type="file"] {
+  color: var(--text-color);
+}
+
+#import-form input[type="file"]::file-selector-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#import-form input[type="file"]::file-selector-button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+#import-button {
+  padding: 10px 19px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#import-button:hover {
+  background-color: rgb(0, 74, 124);
+}
+
+#import-status-message {
+  margin-top: 16px;
+  font-weight: 600;
+  min-height: 19px;
+}

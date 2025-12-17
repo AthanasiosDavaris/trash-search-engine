@@ -55,4 +55,53 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  const importForm = document.getElementById('import-form');
+  const fileInput = document.getElementById('csv-file-input');
+  const importButton = document.getElementById('import-button');
+  const statusMessage = document.getElementById('import-status-message');
+
+  if (importForm) {
+    importForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        statusMessage.textContent = 'Please select a CSV file to upload.'
+        statusMessage.style.color = 'var(--accent-color)';
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('csv_file', file);
+
+      importButton.textContent = 'Uploading...';
+      importButton.disabled = true;
+      statusMessage.textContent = '';
+
+      try {
+        const response = await fetch('http://localhost:5000/api/import', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'An unknown error occurred.');
+        }
+
+        statusMessage.textContent = data.message;
+        statusMessage.style.color = 'var(--primary-color)';
+        importForm.reset();
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        statusMessage.textContent = `Upload failed: ${error.message}`;
+        statusMessage.style.color = 'var(--accent-color)';
+      } finally {
+        importButton.textContent = 'Upload';
+        importButton.disabled = false;
+      }
+    });
+  }
 });
