@@ -246,3 +246,92 @@ main {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.advanced-search-toggle {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#toggle-advanced-search-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.advanced-search-container {
+  background-color: var(--header-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: all 0.3s ease-in-out;
+}
+
+.advanced-search-container.hidden {
+  display: none;
+}
+
+#rules-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.query-rule {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 40px;
+  gap: 12px;
+  align-items: center;
+}
+
+.query-rule select,
+.query-rule input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  width: 100%;
+}
+
+.remove-rule-button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+  justify-self: center;
+}
+
+.remove-rule-button:hover {
+  background: rgb(168, 0, 30);
+}
+
+.builder-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+}
+
+.logic-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

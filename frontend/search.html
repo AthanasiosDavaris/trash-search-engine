@@ -101,6 +101,42 @@
 
     <!-- Main Search Results Content -->
     <main>
+      <!-- Advanced Search Toggle Button -->
+      <div class="advanced-search-toggle">
+        <button id="toggle-advanced-search-button">
+          Advanced Search <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+
+      <!-- Advanced Query Builder -->
+      <section
+        id="advanced-search-container"
+        class="advanced-search-container hidden"
+      >
+        <div id="rules-container">
+          <!-- This part will be dynamically added by JavaScript-->
+        </div>
+        <div class="builder-controls">
+          <button id="add-rule-button" class="action-button">
+            <i class="fas fa-plus"></i> Add Rule
+          </button>
+          <div class="logic-selector">
+            <span>Match</span>
+            <select id="query-logic-select" aria-label="Query Logic">
+              <option value="AND" selected>ALL</option>
+              <option value="OR">ANY</option>
+            </select>
+            <span>conditions</span>
+          </div>
+          <button
+            id="execute-advanced-search-button"
+            class="primary-search-button"
+          >
+            <i class="fas fa-filter"></i> Apply Filters
+          </button>
+        </div>
+      </section>
+
       <div id="results-list">
         <!-- Static content will be replaced by JavaScript -->
         <article class="search-result">
