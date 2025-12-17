@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Image Modal
+  // Image Modal (header)
   const imageModal = document.getElementById('image-modal');
   const imageButton = document.getElementById('image-button');
   const imageCloseButton = document.querySelector('.image-close-button');
@@ -103,5 +103,28 @@ document.addEventListener('DOMContentLoaded', () => {
         imageModal.style.display = 'none';
       }
     });
+  }
+
+  // Terms of Service modal (Footer)
+  const termsModal = document.getElementById('terms-modal');
+  const termsButton = document.getElementById('terms-button');
+  const termsCloseButton = document.querySelector('.terms-close-button');
+
+  if (termsButton && termsModal) {
+    termsButton.addEventListener('click', () => {
+      termsModal.style.display = 'flex';
+    });
+  }
+  if (termsButton && termsModal) {
+    termsCloseButton.addEventListener('click', () => {
+      termsModal.style.display = 'none';
+    });
+  }
+  if (termsModal) {
+    termsModal.addEventListener('click', (event) => {
+      if (event.target === termsModal) {
+        termsModal.style.display = 'none';
+      }
+    })
   }
 });
