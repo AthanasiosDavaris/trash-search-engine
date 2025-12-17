@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const aiSearchButton = document.getElementById('ai-search-button');
   if (aiSearchButton) {
     aiSearchButton.addEventListener('click', () => {
-      alert("did you really think that we implemented an ai feautere sir?");
+      showToast("Did you really think we implemented an AI feature, sir?", "info");
     });
   }
 
@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (post && post.status_link && post.status_link.startsWith('http')) {
           window.open(post.status_link, '_blank');
         } else {
-          alert('The random post found does not have a valid link to open.');
+          showToast('The random post found does not have a valid link.', 'error');
         }
 
       } catch (error) {
         console.error('Error fetching random post:', error);
-        alert('Could not fetch a random post. Please ensure the backend server is running.');
+        showToast('Could not fetch a random post.', 'error');
       } finally {
         randomPostButton.innerHTML = originalButtonContent;
         randomPostButton.disabled = false;
@@ -66,8 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       if (!fileInput.files || fileInput.files.length === 0) {
-        statusMessage.textContent = 'Please select a CSV file to upload.'
-        statusMessage.style.color = 'var(--accent-color)';
+        showToast('Please select a CSV file to upload.', 'error');
         return;
       }
 
@@ -91,13 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(data.error || 'An unknown error occurred.');
         }
 
-        statusMessage.textContent = data.message;
-        statusMessage.style.color = 'var(--primary-color)';
+        showToast(data.message, 'success');
         importForm.reset();
       } catch (error) {
         console.error('Error uploading file:', error);
-        statusMessage.textContent = `Upload failed: ${error.message}`;
-        statusMessage.style.color = 'var(--accent-color)';
+        showToast(`Upload failed: ${error.message}`, 'error');
       } finally {
         importButton.textContent = 'Upload';
         importButton.disabled = false;

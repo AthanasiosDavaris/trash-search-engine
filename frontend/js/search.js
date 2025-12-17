@@ -78,26 +78,23 @@ function handleResultClick(event) {
  * Fetches search results from the backend API
  * @param {string} query - The search term.
  */
-async function fetchResults(query) {
+async function fetchResults(query, apiUrl = `http://localhost:5000/api/search?query=${encodeURIComponent(query)}`) {
   const resultsList = document.getElementById('results-list');
   if (!resultsList) return;
 
-  // immediate feedback to the user
-  resultsList.innerHTML = `<p class="loading-message">Searching for "<strong>${query}</strong>"...</p>`;
-
+  resultsList.innerHTML = `
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-message">Searching for "<strong>${query}</strong>"...</p>
+    </div>`;
   try {
-    apiUrl = `http://localhost:5000/api/search?query=${encodeURIComponent(query)}`;
     const response = await fetch(apiUrl);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
     const data = await response.json();
     renderResults(data.hits);
   } catch (error) {
-    console.error("Error fetching search results:", error);
-    resultsList.innerHTML = '<p class="error-message">Sorry, something went wrong. The backend server might not be running or is unreachable.</p>';
+    console.error("Error fetching results:", error);
+    resultsList.innerHTML = '<p class="error-message">Sorry, something went wrong.</p>';
   }
 }
 
@@ -161,17 +158,17 @@ function handleDelete(postId, elementToRemove) {
       .then(response => response.json())
       .then(data => {
         if (data.status === 'success') {
-          alert(data.message);
+          showToast(data.message, 'success');
           elementToRemove.style.transition = 'opacity 0.5s ease';
           elementToRemove.style.opacity = '0';
           setTimeout(() => elementToRemove.remove(), 500);
         } else {
-          alert(`Error: ${data.message}`);
+          showToast(`Error: ${data.message}`, 'error');
         }
       })
       .catch(error => {
         console.error('Error deleting post:', error);
-        alert('An error occurred while trying to delete the post.');
+        showToast('An error occurred while trying to delete the post.', 'error');
       });
   }
 }
@@ -185,7 +182,11 @@ async function fetchSimilar(postId) {
   if (!resultsList) return;
 
   const postTitle = allHitsData[postId]?.link_name || `post ${postId}`;
-  resultsList.innerHTML = `<p class="loading-message">Finding posts similar to "<strong>${postTitle}</strong>"...</p>`;
+  resultsList.innerHTML = `
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p class="loading-message">Finding posts similar to "<strong>${postTitle}</strong>"...</p>
+    </div>`;
 
   try {
     const apiURL = `http://localhost:5000/api/similar/${postId}`;
