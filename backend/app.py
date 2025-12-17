@@ -66,7 +66,7 @@ def search():
     if "is" in criteria:
       es_query["query"]["bool"]["filter"].append({
         "term": {
-          f"{field}.keyword": criteria["is"]
+          field: criteria["is"]
         }
       })
     else:
