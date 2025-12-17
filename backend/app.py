@@ -64,7 +64,7 @@ def search():
 
   for field, criteria in filters.items():
     if "is" in criteria:
-      es_query["query"]["bool"]["filter"].append({\
+      es_query["query"]["bool"]["filter"].append({
         "term": {
           f"{field}.keyword": criteria["is"]
         }
